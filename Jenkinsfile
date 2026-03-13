@@ -45,3 +45,4 @@ pipeline {
             echo '🚑 ¡ALERTA! El pipeline ha fallado. Revisar logs.'
         }
     }
+}
