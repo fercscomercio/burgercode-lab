@@ -19,7 +19,6 @@ pipeline {
         stage('Test (Control de Calidad)') {
             steps {
                 echo 'Probando la hamburguesa...'
-                // Ejecutamos el test DENTRO del contenedor
                 sh 'docker run --rm burgercode-app python test.py'
             }
         }
@@ -27,11 +26,22 @@ pipeline {
         stage('Deploy (Entrega)') {
             steps {
                 echo 'Desplegando en Producción...'
-                // Borra el contenedor anterior si existe para evitar conflictos
                 sh 'docker rm -f burger-prod || true'
                 sh 'docker run -d --name burger-prod -p 5000:5000 burgercode-app'
                 echo '¡Hamburguesa servida en http://localhost:5000!'
             }
         }
     }
-}
+
+    post {
+        always {
+            echo 'Limpiando la cocina...'
+            sh 'docker image prune -f'
+        }
+        success {
+            echo '🎉 ¡Pipeline completado con éxito!'
+        }
+        failure {
+            echo '🚑 ¡ALERTA! El pipeline ha fallado. Revisar logs.'
+        }
+    }
